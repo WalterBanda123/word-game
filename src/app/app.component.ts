@@ -531,21 +531,14 @@ export class AppComponent implements OnInit {
       return;
     }
 
-    // Deduct credits and update stats
     this.getCurrentProgress().credits -= skipCost;
     this.getCurrentProgress().wordsSkipped++;
     this.wordList[wordIndex].isDiscovered = true;
 
-    // Update skip costs for remaining words
     this.increaseSkipCosts();
 
-    // Reset streak
     this.getCurrentProgress().currentStreak = 0;
-
-    // Check if level is complete without recreating letters
     this.checkLevelCompletion();
-
-    // Save progress
     this.saveLanguageProgress(this.selectedLanguage);
   }
 
@@ -580,25 +573,20 @@ export class AppComponent implements OnInit {
   handleLevelComplete() {
     this.isLevelComplete = true;
 
-    // Get current language progress
     const currentProgress = this.getCurrentProgress();
-
-    // Unlock next level if it exists
     const nextLevelIndex = this.currentLevel;
     if (nextLevelIndex < this.levels.length) {
-      // Add next level to unlockedLevels array if not already there
+
       if (!currentProgress.unlockedLevels.includes(nextLevelIndex + 1)) {
         currentProgress.unlockedLevels.push(nextLevelIndex + 1);
       }
     }
 
-    // Award completion bonus
     const completionBonus = 50;
     currentProgress.credits += completionBonus;
 
     this.modalMessage = `Congratulations! You've completed Level ${this.currentLevel}!\nBonus: ${completionBonus} credits!`;
 
-    // Save current language progress
     this.saveLanguageProgress(this.selectedLanguage);
   }
 
@@ -628,7 +616,6 @@ export class AppComponent implements OnInit {
     const requiredLetters = new Set<string>();
     const letterCount = new Map<string, number>();
 
-    // Count required letters for undiscovered words
     this.wordList.forEach(word => {
       if (!word.isDiscovered) {
         const letters = word.word.split('');
@@ -639,7 +626,6 @@ export class AppComponent implements OnInit {
       }
     });
 
-    // Create unique letters based on actual requirements
     this.uniqueLetters = [];
     letterCount.forEach((count, letter) => {
       for (let i = 0; i < count; i++) {
@@ -714,14 +700,10 @@ export class AppComponent implements OnInit {
 
   changeLanguage() {
     this.saveLanguageProgress(this.selectedLanguage);
-
-    // Load progress for the new language
     this.loadLanguageProgress(this.selectedLanguage);
 
-    // Update current level based on selected language progress
     this.currentLevel = this.getCurrentProgress().currentLevel;
 
-    // Initialize game with new language
     this.initializeGame();
   }
 

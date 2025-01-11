@@ -64,10 +64,7 @@
         (change)="changeLanguage()"
       >
         <option *ngFor="let lang of languages" [value]="lang.code">
-          {{ lang.name }} - Level {{ gameProgress[lang.code].currentLevel }} ({{
-            gameProgress[lang.code].credits
-          }}
-          credits)
+          {{ lang.name }} - Level {{ gameProgress[lang.code].currentLevel }}
         </option>
       </select>
 
