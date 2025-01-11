@@ -1,48 +1,53 @@
 <div class="container py-4">
   <!-- Player Info and Stats -->
   <div class="row mb-4">
-    <div class="row mb-4">
-      <div class="col-md-8 mx-auto">
-        <div class="card">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <div>
-                <h4 class="mb-0">{{ playerStats.name }}</h4>
-                <div class="credits">
-                  <i class="bi bi-coin"></i>
-                  Credits: {{ playerStats.credits }}
-                </div>
-              </div>
-              <div class="level-selector">
-                <select
-                  class="form-select"
-                  [ngModel]="currentLevel"
-                  (ngModelChange)="changeLevel($event)"
-                >
-                  <option
-                    *ngFor="let level of levels"
-                    [value]="level.id"
-                    [disabled]="!level.isUnlocked"
-                  >
-                    {{ level.name }}
-                    {{ !level.isUnlocked ? "🔒" : "" }}
-                  </option>
-                </select>
+    <div class="col-md-8 mx-auto">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <h4 class="mb-0">{{ playerStats.name }}</h4>
+              <div class="credits">
+                <i class="bi bi-coin"></i>
+                Credits: {{ getCurrentProgress().credits }}
+                <!-- Updated to use language-specific credits -->
               </div>
             </div>
-            <div class="stats-grid">
-              <div class="stat-item">
-                <i class="bi bi-trophy"></i>
-                <span>Streak: {{ playerStats.currentStreak }}</span>
-              </div>
-              <div class="stat-item">
-                <i class="bi bi-check-circle"></i>
-                <span>Completed: {{ playerStats.wordsCompleted }}</span>
-              </div>
-              <div class="stat-item">
-                <i class="bi bi-skip-forward"></i>
-                <span>Skipped: {{ playerStats.wordsSkipped }}</span>
-              </div>
+            <div class="level-selector">
+              <select
+                class="form-select"
+                [ngModel]="currentLevel"
+                (ngModelChange)="changeLevel($event)"
+              >
+                <option
+                  *ngFor="let level of levels"
+                  [value]="level.id"
+                  [disabled]="
+                    !getCurrentProgress().unlockedLevels.includes(level.id)
+                  "
+                >
+                  {{ level.name }}
+                  {{
+                    !getCurrentProgress().unlockedLevels.includes(level.id)
+                      ? "🔒"
+                      : ""
+                  }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <i class="bi bi-trophy"></i>
+              <span>Streak: {{ getCurrentProgress().currentStreak }}</span>
+            </div>
+            <div class="stat-item">
+              <i class="bi bi-check-circle"></i>
+              <span>Completed: {{ getCurrentProgress().wordsCompleted }}</span>
+            </div>
+            <div class="stat-item">
+              <i class="bi bi-skip-forward"></i>
+              <span>Skipped: {{ getCurrentProgress().wordsSkipped }}</span>
             </div>
           </div>
         </div>
@@ -59,7 +64,10 @@
         (change)="changeLanguage()"
       >
         <option *ngFor="let lang of languages" [value]="lang.code">
-          {{ lang.name }}
+          {{ lang.name }} - Level {{ gameProgress[lang.code].currentLevel }} ({{
+            gameProgress[lang.code].credits
+          }}
+          credits)
         </option>
       </select>
 
@@ -77,9 +85,22 @@
   <!-- Current Word Display -->
   <div class="row mb-4">
     <div class="col text-center">
-      <h3 class="current-word display-4" [class.text-success]="isWordCorrect">
+      <h3
+        class="current-word display-4"
+        [class.text-success]="isWordCorrect"
+        [class.text-danger]="showError"
+      >
         {{ getCurrentWordDisplay() }}
       </h3>
+      <div
+        *ngIf="showError"
+        class="error-message mt-2 animate__animated animate__shakeX"
+      >
+        <div class="alert alert-danger d-inline-block">
+          <i class="bi bi-exclamation-circle-fill"></i>
+          {{ errorMessage }}
+        </div>
+      </div>
     </div>
   </div>
 
@@ -126,23 +147,34 @@
               class="list-group-item d-flex justify-content-between align-items-center"
             >
               <div>
-                {{ word.isDiscovered ? word.word : getLocalizedHint(word) }}
+                <span *ngIf="word.isDiscovered" class="text-success">
+                  <i class="bi bi-check-circle-fill me-2"></i>
+                  {{ word.word }}
+                </span>
+                <span *ngIf="!word.isDiscovered">
+                  {{ getLocalizedHint(word) }}
+                </span>
               </div>
               <div class="d-flex align-items-center gap-2">
                 <button
                   *ngIf="!word.isDiscovered"
                   class="btn btn-outline-primary btn-sm"
                   (click)="skipWord(i)"
-                  [disabled]="playerStats.credits < getCurrentSkipCost(i)"
+                  [disabled]="
+                    getCurrentProgress().credits < getCurrentSkipCost(i)
+                  "
+                  [title]="
+                    getCurrentProgress().credits < getCurrentSkipCost(i)
+                      ? 'Not enough credits! You need ' +
+                        (getCurrentSkipCost(i) - getCurrentProgress().credits) +
+                        ' more credits.'
+                      : ''
+                  "
                 >
-                  Skip ({{ getCurrentSkipCost(i) }} 💰)
+                  Skip ({{ getCurrentSkipCost(i) }}
+                  <i class="bi bi-coin text-warning"></i>)
                 </button>
-                <span
-                  *ngIf="word.isDiscovered"
-                  class="badge bg-success rounded-pill"
-                >
-                  ✓
-                </span>
+                <span *ngIf="word.isDiscovered" class="text-success"> ✓ </span>
               </div>
             </li>
           </ul>
@@ -151,29 +183,8 @@
     </div>
   </div>
 
-  <!-- Success Modal -->
-  <div class="modal fade" id="successModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-body text-center py-4">
-          <h3 class="celebration-text mb-3">{{ celebrationMessage }}</h3>
-          <p class="lead">{{ modalMessage }}</p>
-          <div class="rewards mb-3">
-            <p>+{{ lastWordScore }} points</p>
-            <p *ngIf="lastStarsEarned > 0">+{{ lastStarsEarned }} ⭐</p>
-          </div>
-          <button
-            *ngIf="isLevelComplete"
-            class="btn btn-success btn-lg mt-3"
-            (click)="nextLevel()"
-          >
-            Next Level
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row mb-4">
+  <!-- Current Word Display -->
+  <!-- <div class="row mb-4">
     <div class="col text-center">
       <h3
         class="current-word display-4"
@@ -192,9 +203,58 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 
-  <!-- ... (rest of the template remains the same) ... -->
+  <div class="modal fade" id="successModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body text-center py-4">
+        <h3 class="celebration-text mb-3">{{ celebrationMessage }}</h3>
+        <p class="lead">{{ modalMessage }}</p>
+
+        <!-- Coin Animation Container -->
+        <div class="rewards mb-3" *ngIf="lastWordScore > 0">
+          <div class="coin-container" [@coinAnimation]="coinState">
+            <div class="coin">
+              <i class="bi bi-coin"></i>
+            </div>
+            <span class="score-text">+{{ lastWordScore }}</span>
+          </div>
+        </div>
+
+        <button
+          *ngIf="isLevelComplete"
+          class="btn btn-success btn-lg mt-3"
+          (click)="nextLevel()"
+        >
+          Next Level
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Success Modal -->
+  <div class="modal fade" id="successModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body text-center py-4">
+          <h3 class="celebration-text mb-3">{{ celebrationMessage }}</h3>
+          <p class="lead">{{ modalMessage }}</p>
+          <div class="rewards mb-3">
+            <p>+{{ lastWordScore }} credits</p>
+          </div>
+          <button
+            *ngIf="isLevelComplete"
+            class="btn btn-success btn-lg mt-3"
+            (click)="nextLevel()"
+          >
+            Next Level
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Error Modal -->
   <div class="modal fade" id="errorModal" tabindex="-1">
@@ -202,7 +262,7 @@
       <div class="modal-content">
         <div class="modal-body text-center py-4">
           <div class="error-icon mb-3">
-            <i class="bi bi-x-circle text-danger"></i>
+            <i class="bi bi-x-circle text-danger display-1"></i>
           </div>
           <h3 class="text-danger mb-3">Oops!</h3>
           <p class="lead">{{ errorMessage }}</p>

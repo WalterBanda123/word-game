@@ -1,8 +1,22 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import * as bootstrap from 'bootstrap';
+import { trigger, state, style, animate, transition } from '@angular/animations';
+
+interface LanguageProgress {
+  credits: number;
+  currentLevel: number;
+  unlockedLevels: number[];
+  wordsCompleted: number;
+  wordsSkipped: number;
+  currentStreak: number;
+  bestStreak: number;
+}
+
+interface GameProgress {
+  [language: string]: LanguageProgress;
+}
 
 interface UniqueLetter {
   id: string;
@@ -56,11 +70,120 @@ interface GameWord {
   standalone: true,
   imports: [FormsModule, CommonModule],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrl: './app.component.css',
+  animations: [
+      trigger('coinAnimation', [
+        state('initial', style({
+          transform: 'translateY(20px)',
+          opacity: 0
+        })),
+        state('final', style({
+          transform: 'translateY(0)',
+          opacity: 1
+        })),
+        transition('initial => final', [
+          animate('300ms ease-out')
+        ])
+      ])
+
+  ]
+
 })
 export class AppComponent implements OnInit {
 
   private readonly BASE_SKIP_COST = 300;
+  public readonly REPLAY_WORD_SCORE = 2;
+
+
+  celebrationMessage: string = '';
+  modalMessage: string = '';
+  lastWordScore: number = 0;
+  isLevelComplete: boolean = false;
+  isReplay: boolean = false;
+  coinState: 'initial' | 'final' = 'initial';
+
+
+  ngOnChanges() {
+    if (this.lastWordScore > 0 && !this.isReplay) {
+      this.coinState = 'initial';
+      setTimeout(() => {
+        this.coinState = 'final';
+      }, 50);
+    }
+  }
+
+  gameProgress: GameProgress = {
+    en: {
+      credits: 100,
+      currentLevel: 1,
+      unlockedLevels: [1],
+      wordsCompleted: 0,
+      wordsSkipped: 0,
+      currentStreak: 0,
+      bestStreak: 0
+    },
+    sn: {
+      credits: 100,
+      currentLevel: 1,
+      unlockedLevels: [1],
+      wordsCompleted: 0,
+      wordsSkipped: 0,
+      currentStreak: 0,
+      bestStreak: 0
+    },
+    nd: {
+      credits: 100,
+      currentLevel: 1,
+      unlockedLevels: [1],
+      wordsCompleted: 0,
+      wordsSkipped: 0,
+      currentStreak: 0,
+      bestStreak: 0
+    }
+  };
+
+
+  validateAndSubmitWord() {
+    const word = this.getCurrentWordDisplay();
+
+    // First check all discovered words (to prevent duplicate findings)
+    const isReplay = this.wordList.some(w =>
+      w.isDiscovered && w.word === word
+    );
+
+    if (isReplay) {
+      // Handle replay case
+      this.isWordCorrect = true;
+      this.lastWordScore = 0;
+      this.celebrationMessage = 'Word Already Found!';
+      this.modalMessage = `You found: ${word} (already discovered)`;
+
+      const modal = new bootstrap.Modal(document.getElementById('successModal')!);
+      modal.show();
+
+      setTimeout(() => {
+        this.clearError();
+        this.clearSelection();
+        modal.hide();
+      }, 2000);
+
+      return;
+    }
+
+    // Check for valid words regardless of their order in the hints list
+    const foundWord = this.wordList.find(w => w.word === word && !w.isDiscovered);
+
+    if (foundWord) {
+      this.clearError();
+      this.processCorrectWord(foundWord);
+    } else {
+      this.handleIncorrectWord(word);
+    }
+  }
+
+  getCurrentProgress(): LanguageProgress {
+    return this.gameProgress[this.selectedLanguage];
+  }
 
   // Update selectLetter to handle both selection and deselection
   selectLetter(letter: UniqueLetter) {
@@ -261,8 +384,7 @@ export class AppComponent implements OnInit {
 
   uniqueLetters: UniqueLetter[] = [];
   selectedLetterIds: string[] = [];
-  isLevelComplete: boolean = false;
-  modalMessage: string = '';
+  lastStarsEarned: number = 0;
   currentLevel: number = 1;
   selectedLanguage: LanguageCode = 'en';
   wordList: GameWord[] = [];
@@ -271,11 +393,9 @@ export class AppComponent implements OnInit {
     'Fantastic!', 'Amazing!', 'Brilliant!',
     'Wonderful!', 'Great job!', 'Excellent!'
   ];
-  celebrationMessage: string = '';
   levelSkipCosts: { [levelId: number]: { [wordIndex: number]: number } } = {};
 
   constructor() {
-    // Initialize skip costs for each level
     this.levels.forEach(level => {
       this.levelSkipCosts[level.id] = {};
     });
@@ -283,7 +403,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.initializeGame();
-    this.loadSavedProgress(); // Add this to load any saved progress
+    this.loadSavedProgress();
   }
 
   loadSavedProgress() {
@@ -297,29 +417,46 @@ export class AppComponent implements OnInit {
   }
 
   initializeGame() {
-    // Clear previous level data
     this.clearLevelData();
 
-    // Reset word list for new level with the correct level access
+    // Load progress for current language
+    const currentProgress = this.getCurrentProgress();
+
+    // Set current level from language progress
+    this.currentLevel = currentProgress.currentLevel;
+
+    // Reset word list for current level
     this.wordList = [...this.wordDatabase[this.selectedLanguage].levels[this.currentLevel].words];
 
-    // Initialize or load skip costs for current level
+    // Initialize skip costs for the new level
     this.initializeSkipCosts();
 
+    // Create and shuffle letters for the new level
     this.createUniqueLetters();
     this.shuffleLetters();
     this.clearSelection();
 
-    // Load level-specific progress if exists
-    this.loadLevelProgress();
+    // Reset level completion flag
+    this.isLevelComplete = false;
   }
+
+  clearLevelData() {
+    this.isLevelComplete = false;
+    this.modalMessage = '';
+    this.selectedLetterIds = [];
+    this.isWordCorrect = false;
+    this.celebrationMessage = '';
+    this.uniqueLetters = [];
+  }
+
+
 
   loadLevelProgress() {
     const savedProgress = localStorage.getItem(`level_${this.currentLevel}_progress`);
     if (savedProgress) {
       const progress = JSON.parse(savedProgress);
       this.levelSkipCosts[this.currentLevel] = progress.skipCosts;
-      // Only load completed words status
+
       this.wordList.forEach((word, index) => {
         if (index < progress.completedWords) {
           word.isDiscovered = true;
@@ -328,24 +465,38 @@ export class AppComponent implements OnInit {
     }
   }
 
+  loadLanguageProgress(language: LanguageCode) {
+    const savedProgress = localStorage.getItem(`gameProgress_${language}`);
+    if (savedProgress) {
+      const progress = JSON.parse(savedProgress);
+      this.gameProgress[language] = progress.gameProgress;
+      this.levelSkipCosts = progress.levelSkipCosts;
 
-
-  clearLevelData() {
-    this.isLevelComplete = false;
-    this.modalMessage = '';
-    this.selectedLetterIds = [];
-    this.isWordCorrect = false;
-    this.celebrationMessage = '';
+      if (progress.discoveredWords) {
+        progress.discoveredWords.forEach((saved: { word: string, isDiscovered: boolean }) => {
+          const word = this.wordList.find(w => w.word === saved.word);
+          if (word) {
+            word.isDiscovered = saved.isDiscovered;
+          }
+        });
+      }
+    }
   }
 
-  // Modified to properly handle level changes
   changeLevel(event?: any) {
-    // If event exists, it means it was triggered by the dropdown
     const newLevel = event ? parseInt(event.target.value) : this.currentLevel;
+    const currentProgress = this.getCurrentProgress();
 
-    if (this.levels[newLevel - 1].isUnlocked) {
-      this.saveCurrentLevelProgress(); // Save progress of current level
+    // Check if the level is unlocked (this includes both higher and lower levels)
+    if (currentProgress.unlockedLevels.includes(newLevel)) {
+      // Save progress of current level before changing
+      this.saveLanguageProgress(this.selectedLanguage);
+
+      // Update current level in both places
       this.currentLevel = newLevel;
+      currentProgress.currentLevel = newLevel;
+
+      // Initialize the new level
       this.initializeGame();
     }
   }
@@ -354,8 +505,7 @@ export class AppComponent implements OnInit {
     if (!this.levelSkipCosts[this.currentLevel]) {
       this.levelSkipCosts[this.currentLevel] = {};
       this.wordList.forEach((_, index) => {
-        // Start with BASE_SKIP_COST and increase for each level
-        const levelMultiplier = 1 + (this.currentLevel - 1) * 0.5; // 50% increase per level
+        const levelMultiplier = 1 + (this.currentLevel - 1) * 0.5;
         this.levelSkipCosts[this.currentLevel][index] =
           Math.round(this.BASE_SKIP_COST * levelMultiplier);
       });
@@ -364,31 +514,51 @@ export class AppComponent implements OnInit {
 
   skipWord(wordIndex: number) {
     const skipCost = this.getCurrentSkipCost(wordIndex);
+    const currentCredits = this.getCurrentProgress().credits;
 
-    if (this.playerStats.credits >= skipCost) {
-      // Deduct credits
-      this.playerStats.credits -= skipCost;
+    if (currentCredits < skipCost) {
+      this.showError = true;
+      this.errorMessage = `Not enough credits! You need ${skipCost} credits to skip this word. Current balance: ${currentCredits} credits`;
 
-      // Mark word as discovered
-      this.wordList[wordIndex].isDiscovered = true;
-      this.playerStats.wordsSkipped++;
+      const modal = new bootstrap.Modal(document.getElementById('errorModal')!);
+      modal.show();
 
-      // Increase skip costs for remaining words in this level
-      this.increaseSkipCosts();
+      setTimeout(() => {
+        this.clearError();
+        modal.hide();
+      }, 3000);
 
-      // Reset streak
-      this.playerStats.currentStreak = 0;
-
-      // Refresh available letters
-      this.createUniqueLetters();
-      this.shuffleLetters();
-
-      // Check level completion
-      this.checkLevelCompletion();
-
-      // Save progress
-      this.saveCurrentLevelProgress();
+      return;
     }
+
+    // Deduct credits and update stats
+    this.getCurrentProgress().credits -= skipCost;
+    this.getCurrentProgress().wordsSkipped++;
+    this.wordList[wordIndex].isDiscovered = true;
+
+    // Update skip costs for remaining words
+    this.increaseSkipCosts();
+
+    // Reset streak
+    this.getCurrentProgress().currentStreak = 0;
+
+    // Check if level is complete without recreating letters
+    this.checkLevelCompletion();
+
+    // Save progress
+    this.saveLanguageProgress(this.selectedLanguage);
+  }
+
+  saveLanguageProgress(language: LanguageCode) {
+    const progressData = {
+      gameProgress: this.gameProgress[language],
+      levelSkipCosts: this.levelSkipCosts,
+      discoveredWords: this.wordList.map(w => ({
+        word: w.word,
+        isDiscovered: w.isDiscovered
+      }))
+    };
+    localStorage.setItem(`gameProgress_${language}`, JSON.stringify(progressData));
   }
 
   checkLevelCompletion() {
@@ -400,7 +570,6 @@ export class AppComponent implements OnInit {
   increaseSkipCosts() {
     Object.keys(this.levelSkipCosts[this.currentLevel]).forEach(index => {
       if (!this.wordList[Number(index)].isDiscovered) {
-        // Increase cost by 20% for each skip
         const currentCost = this.levelSkipCosts[this.currentLevel][Number(index)];
         this.levelSkipCosts[this.currentLevel][Number(index)] =
           Math.round(currentCost * 1.2);
@@ -411,23 +580,26 @@ export class AppComponent implements OnInit {
   handleLevelComplete() {
     this.isLevelComplete = true;
 
+    // Get current language progress
+    const currentProgress = this.getCurrentProgress();
+
     // Unlock next level if it exists
     const nextLevelIndex = this.currentLevel;
     if (nextLevelIndex < this.levels.length) {
-      this.levels[nextLevelIndex].isUnlocked = true;
-      if (!this.playerStats.unlockedLevels.includes(nextLevelIndex + 1)) {
-        this.playerStats.unlockedLevels.push(nextLevelIndex + 1);
+      // Add next level to unlockedLevels array if not already there
+      if (!currentProgress.unlockedLevels.includes(nextLevelIndex + 1)) {
+        currentProgress.unlockedLevels.push(nextLevelIndex + 1);
       }
     }
 
     // Award completion bonus
     const completionBonus = 50;
-    this.playerStats.credits += completionBonus;
+    currentProgress.credits += completionBonus;
 
     this.modalMessage = `Congratulations! You've completed Level ${this.currentLevel}!\nBonus: ${completionBonus} credits!`;
 
-    // Save progress
-    this.saveProgress();
+    // Save current language progress
+    this.saveLanguageProgress(this.selectedLanguage);
   }
 
   saveProgress() {
@@ -504,8 +676,24 @@ export class AppComponent implements OnInit {
   }
 
   nextLevel() {
-    this.currentLevel++;
-    this.initializeGame();
+    if (this.currentLevel < this.levels.length) {
+      // Increment current level in language progress
+      this.getCurrentProgress().currentLevel = this.currentLevel + 1;
+      this.currentLevel += 1;
+
+      // Save progress before initializing new level
+      this.saveLanguageProgress(this.selectedLanguage);
+
+      // Initialize the new level
+      this.initializeGame();
+
+      // Close any open modals
+      const successModal = document.getElementById('successModal');
+      if (successModal) {
+        const modal = bootstrap.Modal.getInstance(successModal);
+        modal?.hide();
+      }
+    }
   }
 
   get totalWords(): number {
@@ -525,6 +713,15 @@ export class AppComponent implements OnInit {
   }
 
   changeLanguage() {
+    this.saveLanguageProgress(this.selectedLanguage);
+
+    // Load progress for the new language
+    this.loadLanguageProgress(this.selectedLanguage);
+
+    // Update current level based on selected language progress
+    this.currentLevel = this.getCurrentProgress().currentLevel;
+
+    // Initialize game with new language
     this.initializeGame();
   }
 
@@ -533,17 +730,14 @@ export class AppComponent implements OnInit {
   }
 
 
-  lastWordScore: number = 0;
-  lastStarsEarned: number = 0;
 
+  calculateWordScore(word: string, isReplay: boolean = false): number {
+    if (isReplay) {
+      return this.REPLAY_WORD_SCORE;
+    }
 
-  calculateWordScore(word: string): number {
-    // Base score calculation now awards credits instead
     let credits = word.length * 2;
-
-    // Bonus for streak
-    credits += Math.min(this.playerStats.currentStreak, 5);
-
+    credits += Math.min(this.getCurrentProgress().currentStreak, 5);
     return credits;
   }
 
@@ -610,39 +804,35 @@ export class AppComponent implements OnInit {
     }
   }
 
-  validateAndSubmitWord() {
-    const word = this.getCurrentWordDisplay();
-    const foundWord = this.wordList.find(w => !w.isDiscovered && w.word === word);
-
-    if (foundWord) {
-      // Clear any existing error state
-      this.clearError();
-      this.processCorrectWord(foundWord);
-    } else {
-      this.handleIncorrectWord(word);
-    }
-  }
-
   processCorrectWord(foundWord: GameWord) {
-    foundWord.isDiscovered = true;
-    this.playerStats.wordsCompleted++;
-    this.playerStats.currentStreak++;
+    // Reset animation state
+    this.coinState = 'initial';
 
-    if (this.playerStats.currentStreak > this.playerStats.bestStreak) {
-      this.playerStats.bestStreak = this.playerStats.currentStreak;
+    // Check if this is a replay
+    this.isReplay = this.wordList.some(w =>
+      w.isDiscovered && w.word === foundWord.word && w !== foundWord
+    );
+
+    // Mark the word as discovered
+    foundWord.isDiscovered = true;
+
+    // Calculate score and update progress only if not a replay
+    if (!this.isReplay) {
+      this.getCurrentProgress().wordsCompleted++;
+      this.getCurrentProgress().currentStreak++;
+
+      if (this.getCurrentProgress().currentStreak > this.getCurrentProgress().bestStreak) {
+        this.getCurrentProgress().bestStreak = this.getCurrentProgress().currentStreak;
+      }
+
+      // Calculate and award credits
+      this.lastWordScore = this.calculateWordScore(foundWord.word);
+      this.getCurrentProgress().credits += this.lastWordScore;
+    } else {
+      this.lastWordScore = 0;
     }
 
-    const earnedCredits = this.calculateWordScore(foundWord.word);
-    this.playerStats.credits += earnedCredits;
-
-    this.modalMessage = `You discovered: ${foundWord.word}\nEarned: ${earnedCredits} credits!`;
-
-    this.lastWordScore = this.calculateWordScore(foundWord.word);
-
-
-    this.lastStarsEarned = Math.floor(this.playerStats.currentStreak / 5);
-
-
+    // Set celebration message
     this.celebrationMessage = this.celebrationMessages[
       Math.floor(Math.random() * this.celebrationMessages.length)
     ];
@@ -650,19 +840,44 @@ export class AppComponent implements OnInit {
     this.isWordCorrect = true;
     this.modalMessage = `You discovered: ${foundWord.word}`;
 
+    // Check if level is complete
     if (this.discoveredWords.length === this.totalWords) {
       this.handleLevelComplete();
     }
 
+    // Show modal and trigger animation
+    const modal = new bootstrap.Modal(document.getElementById('successModal')!);
+    modal.show();
+
+    // Trigger coin animation after a short delay
+    setTimeout(() => {
+      this.coinState = 'final';
+    }, 100);
+
+    if (!this.isLevelComplete) {
+      setTimeout(() => {
+        modal.hide();
+        this.clearSelection();
+      }, 2000);
+    }
+
+    // Save progress
+    this.saveLanguageProgress(this.selectedLanguage);
+  }
+
+  watchAdForCredits() {
+    const CREDITS_PER_AD = 50; // Configurable amount
+    this.getCurrentProgress().credits += CREDITS_PER_AD;
+    this.saveLanguageProgress(this.selectedLanguage);
+
+    // Show success message
+    this.modalMessage = `Earned ${CREDITS_PER_AD} credits from ad!`;
     const modal = new bootstrap.Modal(document.getElementById('successModal')!);
     modal.show();
 
     setTimeout(() => {
-      if (!this.isLevelComplete) {
-        modal.hide();
-        this.clearSelection();
-      }
-    }, 1500);
+      modal.hide();
+    }, 2000);
   }
 
   handleIncorrectWord(word: string) {
@@ -701,6 +916,6 @@ export class AppComponent implements OnInit {
     this.selectedLetterIds = [];
     this.isWordCorrect = false;
     this.clearError();
+    this.coinState = 'initial';
   }
-
 }
