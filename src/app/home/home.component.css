@@ -1,0 +1,62 @@
+/* Custom gradient background using bootstrap info-primary range */
+.custom-gradient {
+  background: linear-gradient(
+    120deg,
+    rgba(13, 110, 253, 0.05) 0%,    /* Bootstrap primary with low opacity */
+    rgba(13, 202, 240, 0.1) 50%,     /* Bootstrap info with low opacity */
+    rgba(13, 110, 253, 0.05) 100%    /* Bootstrap primary with low opacity */
+  );
+  position: relative;
+}
+
+/* Subtle pattern overlay */
+.pattern-overlay {
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(13, 110, 253, 0.08) 1px,    /* Bootstrap primary with very low opacity */
+    transparent 0
+  );
+  background-size: 24px 24px;
+  opacity: 0.3;
+}
+
+/* Card hover effects */
+.hover-card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.hover-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(13, 110, 253, 0.1) !important;  /* Bootstrap primary shadow */
+}
+
+/* Button hover effect */
+.hover-effect {
+  transition: transform 0.2s ease-in-out;
+}
+
+.hover-effect:hover {
+  transform: translateY(-2px);
+}
+
+/* Text colors using bootstrap info-primary range */
+.text-gray-900 {
+  color: #0d2d62;  /* Darker shade based on bootstrap primary */
+}
+
+.text-gray-700 {
+  color: #0d6efd;  /* Bootstrap primary */
+}
+
+.text-gray-600 {
+  color: #0dcaf0;  /* Bootstrap info */
+}
+
+/* Custom shadows with bootstrap colors */
+.shadow-lg {
+  box-shadow: 0 4px 16px rgba(13, 110, 253, 0.12);  /* Bootstrap primary shadow */
+}
+
+.shadow-sm {
+  box-shadow: 0 2px 8px rgba(13, 110, 253, 0.08);   /* Bootstrap primary shadow */
+}

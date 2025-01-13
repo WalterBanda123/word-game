@@ -2,6 +2,10 @@
 /* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
 {
   "compileOnSave": false,
+  "files": [
+    "src/main.ts",
+    "src/polyfills.ts"
+  ],
   "compilerOptions": {
     "outDir": "./dist/out-tsc",
     "strict": true,
