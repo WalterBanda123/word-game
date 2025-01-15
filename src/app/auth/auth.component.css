@@ -1,0 +1,29 @@
+.auth-page {
+  min-height: 100vh;
+  padding: 4rem 0;
+  background: linear-gradient(135deg, #4ca1af, #2c3e50);
+}
+
+.auth-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.btn-outline-light {
+  border-width: 2px;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-light:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Add this if you want to make the container narrower on larger screens */
+@media (min-width: 992px) {
+  .container {
+    max-width: 960px;
+  }
+}

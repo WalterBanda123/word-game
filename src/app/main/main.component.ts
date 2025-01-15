@@ -1,8 +1,10 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import * as bootstrap from 'bootstrap';
 import { trigger, state, style, animate, transition } from '@angular/animations';
+import { AuthService } from "../services/auth.service"
+import {APIService} from "../API.service"
 
 interface LanguageProgress {
   credits: number;
@@ -70,7 +72,7 @@ interface GameWord {
   selector: 'app-main',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  schemas:[CUSTOM_ELEMENTS_SCHEMA],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './main.component.html',
   styleUrl: './main.component.css',
   animations: [
@@ -93,6 +95,148 @@ interface GameWord {
 export class MainComponent implements OnInit {
   private readonly BASE_SKIP_COST = 300;
   public readonly REPLAY_WORD_SCORE = 2;
+  private auth = inject(AuthService)
+  player: { username: string, userId: string } = { username: '', userId: '' }
+
+  wordDatabase: WordDatabase = {
+    en: {
+      levels: {
+        1: {
+          words: [
+            { word: 'LOVE', hint: 'A deep affection', isDiscovered: false, skipCost: 20 },
+            { word: 'LIFE', hint: 'Existence', isDiscovered: false, skipCost: 20 },
+            { word: 'LIVE', hint: 'To exist', isDiscovered: false, skipCost: 20 },
+            { word: 'EVIL', hint: 'The opposite of good', isDiscovered: false, skipCost: 20 }
+          ],
+          hints: {
+            'LOVE': 'A deep affection',
+            'LIFE': 'Existence',
+            'LIVE': 'To exist',
+            'EVIL': 'The opposite of good'
+          }
+        },
+        2: {
+          words: [
+            { word: 'HEART', hint: 'Vital organ of love', isDiscovered: false, skipCost: 25 },
+            { word: 'EARTH', hint: 'Our planet', isDiscovered: false, skipCost: 25 },
+            { word: 'HEAR', hint: 'To perceive sound', isDiscovered: false, skipCost: 25 },
+            { word: 'HEAT', hint: 'High temperature', isDiscovered: false, skipCost: 25 }
+          ],
+          hints: {
+            'HEART': 'Vital organ of love',
+            'EARTH': 'Our planet',
+            'HEAR': 'To perceive sound',
+            'HEAT': 'High temperature'
+          }
+        },
+        3: {
+          words: [
+            { word: 'DREAM', hint: 'Vision during sleep', isDiscovered: false, skipCost: 30 },
+            { word: 'DRAMA', hint: 'Theatrical performance', isDiscovered: false, skipCost: 30 },
+            { word: 'MEDAL', hint: 'Award for achievement', isDiscovered: false, skipCost: 30 },
+            { word: 'MADE', hint: 'Created or produced', isDiscovered: false, skipCost: 30 }
+          ],
+          hints: {
+            'DREAM': 'Vision during sleep',
+            'DRAMA': 'Theatrical performance',
+            'MEDAL': 'Award for achievement',
+            'MADE': 'Created or produced'
+          }
+        }
+      }
+    },
+    sn: {
+      levels: {
+        1: {
+          words: [
+            { word: 'BABA', hint: 'Baba (Father)', isDiscovered: false, skipCost: 20 },
+            { word: 'AMAI', hint: 'Amai (Mother)', isDiscovered: false, skipCost: 20 },
+            { word: 'MWANA', hint: 'Mwanakomana (Child)', isDiscovered: false, skipCost: 20 }
+          ],
+          hints: {
+            'BABA': 'Baba (Father)',
+            'AMAI': 'Amai (Mother)',
+            'MWANA': 'Mwanakomana (Child)'
+          }
+        },
+        2: {
+          words: [
+            { word: 'MVURA', hint: 'Water', isDiscovered: false, skipCost: 25 },
+            { word: 'SADZA', hint: 'Traditional meal', isDiscovered: false, skipCost: 25 },
+            { word: 'MUSHA', hint: 'Home/Homestead', isDiscovered: false, skipCost: 25 }
+          ],
+          hints: {
+            'MVURA': 'Water',
+            'SADZA': 'Traditional meal',
+            'MUSHA': 'Home/Homestead'
+          }
+        },
+        3: {
+          words: [
+            { word: 'KURIMA', hint: 'To farm', isDiscovered: false, skipCost: 30 },
+            { word: 'KUBIKA', hint: 'To cook', isDiscovered: false, skipCost: 30 },
+            { word: 'KUTAURA', hint: 'To speak', isDiscovered: false, skipCost: 30 }
+          ],
+          hints: {
+            'KURIMA': 'To farm',
+            'KUBIKA': 'To cook',
+            'KUTAURA': 'To speak'
+          }
+        }
+      }
+    },
+    nd: {
+      levels: {
+        1: {
+          words: [
+            { word: 'BABA', hint: 'Ubaba (Father)', isDiscovered: false, skipCost: 20 },
+            { word: 'MAMA', hint: 'Umama (Mother)', isDiscovered: false, skipCost: 20 },
+            { word: 'ABANTU', hint: 'Abantu (People)', isDiscovered: false, skipCost: 20 }
+          ],
+          hints: {
+            'BABA': 'Ubaba (Father)',
+            'MAMA': 'Umama (Mother)',
+            'ABANTU': 'Abantu (People)'
+          }
+        },
+        2: {
+          words: [
+            { word: 'AMANZI', hint: 'Water', isDiscovered: false, skipCost: 25 },
+            { word: 'ISINKWA', hint: 'Bread', isDiscovered: false, skipCost: 25 },
+            { word: 'IKHAYA', hint: 'Home', isDiscovered: false, skipCost: 25 }
+          ],
+          hints: {
+            'AMANZI': 'Water',
+            'ISINKWA': 'Bread',
+            'IKHAYA': 'Home'
+          }
+        },
+        3: {
+          words: [
+            { word: 'UKULIMA', hint: 'To farm', isDiscovered: false, skipCost: 30 },
+            { word: 'UKUPHEKA', hint: 'To cook', isDiscovered: false, skipCost: 30 },
+            { word: 'UKUKHULUMA', hint: 'To speak', isDiscovered: false, skipCost: 30 }
+          ],
+          hints: {
+            'UKULIMA': 'To farm',
+            'UKUPHEKA': 'To cook',
+            'UKUKHULUMA': 'To speak'
+          }
+        }
+      }
+    }
+  };
+
+  ngOnInit() {
+    this.initializeGame();
+    this.loadSavedProgress();
+    this.auth.getCurrentUser().subscribe((response) => {
+      console.log(response)
+      const { userId, username } = response
+      this.player = { userId, username }
+    })
+  }
+
 
 
   celebrationMessage: string = '';
@@ -110,6 +254,10 @@ export class MainComponent implements OnInit {
         this.coinState = 'final';
       }, 50);
     }
+  }
+
+  createGameProgress(){
+
   }
 
   gameProgress: GameProgress = {
@@ -253,134 +401,7 @@ export class MainComponent implements OnInit {
     { code: 'nd', name: 'Ndebele' }
   ];
 
-  wordDatabase: WordDatabase = {
-    en: {
-      levels: {
-        1: {
-          words: [
-            { word: 'LOVE', hint: 'A deep affection', isDiscovered: false, skipCost: 20 },
-            { word: 'LIFE', hint: 'Existence', isDiscovered: false, skipCost: 20 },
-            { word: 'LIVE', hint: 'To exist', isDiscovered: false, skipCost: 20 },
-            { word: 'EVIL', hint: 'The opposite of good', isDiscovered: false, skipCost: 20 }
-          ],
-          hints: {
-            'LOVE': 'A deep affection',
-            'LIFE': 'Existence',
-            'LIVE': 'To exist',
-            'EVIL': 'The opposite of good'
-          }
-        },
-        2: {
-          words: [
-            { word: 'HEART', hint: 'Vital organ of love', isDiscovered: false, skipCost: 25 },
-            { word: 'EARTH', hint: 'Our planet', isDiscovered: false, skipCost: 25 },
-            { word: 'HEAR', hint: 'To perceive sound', isDiscovered: false, skipCost: 25 },
-            { word: 'HEAT', hint: 'High temperature', isDiscovered: false, skipCost: 25 }
-          ],
-          hints: {
-            'HEART': 'Vital organ of love',
-            'EARTH': 'Our planet',
-            'HEAR': 'To perceive sound',
-            'HEAT': 'High temperature'
-          }
-        },
-        3: {
-          words: [
-            { word: 'DREAM', hint: 'Vision during sleep', isDiscovered: false, skipCost: 30 },
-            { word: 'DRAMA', hint: 'Theatrical performance', isDiscovered: false, skipCost: 30 },
-            { word: 'MEDAL', hint: 'Award for achievement', isDiscovered: false, skipCost: 30 },
-            { word: 'MADE', hint: 'Created or produced', isDiscovered: false, skipCost: 30 }
-          ],
-          hints: {
-            'DREAM': 'Vision during sleep',
-            'DRAMA': 'Theatrical performance',
-            'MEDAL': 'Award for achievement',
-            'MADE': 'Created or produced'
-          }
-        }
-      }
-    },
-    sn: {
-      levels: {
-        1: {
-          words: [
-            { word: 'BABA', hint: 'Baba (Father)', isDiscovered: false, skipCost: 20 },
-            { word: 'AMAI', hint: 'Amai (Mother)', isDiscovered: false, skipCost: 20 },
-            { word: 'MWANA', hint: 'Mwanakomana (Child)', isDiscovered: false, skipCost: 20 }
-          ],
-          hints: {
-            'BABA': 'Baba (Father)',
-            'AMAI': 'Amai (Mother)',
-            'MWANA': 'Mwanakomana (Child)'
-          }
-        },
-        2: {
-          words: [
-            { word: 'MVURA', hint: 'Water', isDiscovered: false, skipCost: 25 },
-            { word: 'SADZA', hint: 'Traditional meal', isDiscovered: false, skipCost: 25 },
-            { word: 'MUSHA', hint: 'Home/Homestead', isDiscovered: false, skipCost: 25 }
-          ],
-          hints: {
-            'MVURA': 'Water',
-            'SADZA': 'Traditional meal',
-            'MUSHA': 'Home/Homestead'
-          }
-        },
-        3: {
-          words: [
-            { word: 'KURIMA', hint: 'To farm', isDiscovered: false, skipCost: 30 },
-            { word: 'KUBIKA', hint: 'To cook', isDiscovered: false, skipCost: 30 },
-            { word: 'KUTAURA', hint: 'To speak', isDiscovered: false, skipCost: 30 }
-          ],
-          hints: {
-            'KURIMA': 'To farm',
-            'KUBIKA': 'To cook',
-            'KUTAURA': 'To speak'
-          }
-        }
-      }
-    },
-    nd: {
-      levels: {
-        1: {
-          words: [
-            { word: 'BABA', hint: 'Ubaba (Father)', isDiscovered: false, skipCost: 20 },
-            { word: 'MAMA', hint: 'Umama (Mother)', isDiscovered: false, skipCost: 20 },
-            { word: 'ABANTU', hint: 'Abantu (People)', isDiscovered: false, skipCost: 20 }
-          ],
-          hints: {
-            'BABA': 'Ubaba (Father)',
-            'MAMA': 'Umama (Mother)',
-            'ABANTU': 'Abantu (People)'
-          }
-        },
-        2: {
-          words: [
-            { word: 'AMANZI', hint: 'Water', isDiscovered: false, skipCost: 25 },
-            { word: 'ISINKWA', hint: 'Bread', isDiscovered: false, skipCost: 25 },
-            { word: 'IKHAYA', hint: 'Home', isDiscovered: false, skipCost: 25 }
-          ],
-          hints: {
-            'AMANZI': 'Water',
-            'ISINKWA': 'Bread',
-            'IKHAYA': 'Home'
-          }
-        },
-        3: {
-          words: [
-            { word: 'UKULIMA', hint: 'To farm', isDiscovered: false, skipCost: 30 },
-            { word: 'UKUPHEKA', hint: 'To cook', isDiscovered: false, skipCost: 30 },
-            { word: 'UKUKHULUMA', hint: 'To speak', isDiscovered: false, skipCost: 30 }
-          ],
-          hints: {
-            'UKULIMA': 'To farm',
-            'UKUPHEKA': 'To cook',
-            'UKUKHULUMA': 'To speak'
-          }
-        }
-      }
-    }
-  };
+
 
   uniqueLetters: UniqueLetter[] = [];
   selectedLetterIds: string[] = [];
@@ -401,10 +422,6 @@ export class MainComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-    this.initializeGame();
-    this.loadSavedProgress();
-  }
 
   loadSavedProgress() {
     const savedProgress = localStorage.getItem('gameProgress');

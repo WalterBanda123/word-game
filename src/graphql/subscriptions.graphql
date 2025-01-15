@@ -1,0 +1,469 @@
+# this is an auto generated file. This will be overwritten
+
+subscription OnCreateUser(
+  $filter: ModelSubscriptionUserFilterInput
+  $owner: String
+) {
+  onCreateUser(filter: $filter, owner: $owner) {
+    id
+    cognitoId
+    username
+    gameProgresses {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+subscription OnUpdateUser(
+  $filter: ModelSubscriptionUserFilterInput
+  $owner: String
+) {
+  onUpdateUser(filter: $filter, owner: $owner) {
+    id
+    cognitoId
+    username
+    gameProgresses {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+subscription OnDeleteUser(
+  $filter: ModelSubscriptionUserFilterInput
+  $owner: String
+) {
+  onDeleteUser(filter: $filter, owner: $owner) {
+    id
+    cognitoId
+    username
+    gameProgresses {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+subscription OnCreateGameProgress(
+  $filter: ModelSubscriptionGameProgressFilterInput
+  $owner: String
+) {
+  onCreateGameProgress(filter: $filter, owner: $owner) {
+    id
+    userID
+    user {
+      id
+      cognitoId
+      username
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+    languageCode
+    credits
+    currentLevel
+    unlockedLevels
+    wordsCompleted
+    wordsSkipped
+    currentStreak
+    bestStreak
+    discoveredWords {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+subscription OnUpdateGameProgress(
+  $filter: ModelSubscriptionGameProgressFilterInput
+  $owner: String
+) {
+  onUpdateGameProgress(filter: $filter, owner: $owner) {
+    id
+    userID
+    user {
+      id
+      cognitoId
+      username
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+    languageCode
+    credits
+    currentLevel
+    unlockedLevels
+    wordsCompleted
+    wordsSkipped
+    currentStreak
+    bestStreak
+    discoveredWords {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+subscription OnDeleteGameProgress(
+  $filter: ModelSubscriptionGameProgressFilterInput
+  $owner: String
+) {
+  onDeleteGameProgress(filter: $filter, owner: $owner) {
+    id
+    userID
+    user {
+      id
+      cognitoId
+      username
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+    languageCode
+    credits
+    currentLevel
+    unlockedLevels
+    wordsCompleted
+    wordsSkipped
+    currentStreak
+    bestStreak
+    discoveredWords {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+subscription OnCreateDiscoveredWord(
+  $filter: ModelSubscriptionDiscoveredWordFilterInput
+  $owner: String
+) {
+  onCreateDiscoveredWord(filter: $filter, owner: $owner) {
+    id
+    gameProgressID
+    gameProgress {
+      id
+      userID
+      languageCode
+      credits
+      currentLevel
+      unlockedLevels
+      wordsCompleted
+      wordsSkipped
+      currentStreak
+      bestStreak
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+    wordID
+    word {
+      id
+      levelID
+      word
+      hint
+      skipCost
+      createdAt
+      updatedAt
+      __typename
+    }
+    isDiscovered
+    discoveredAt
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+subscription OnUpdateDiscoveredWord(
+  $filter: ModelSubscriptionDiscoveredWordFilterInput
+  $owner: String
+) {
+  onUpdateDiscoveredWord(filter: $filter, owner: $owner) {
+    id
+    gameProgressID
+    gameProgress {
+      id
+      userID
+      languageCode
+      credits
+      currentLevel
+      unlockedLevels
+      wordsCompleted
+      wordsSkipped
+      currentStreak
+      bestStreak
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+    wordID
+    word {
+      id
+      levelID
+      word
+      hint
+      skipCost
+      createdAt
+      updatedAt
+      __typename
+    }
+    isDiscovered
+    discoveredAt
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+subscription OnDeleteDiscoveredWord(
+  $filter: ModelSubscriptionDiscoveredWordFilterInput
+  $owner: String
+) {
+  onDeleteDiscoveredWord(filter: $filter, owner: $owner) {
+    id
+    gameProgressID
+    gameProgress {
+      id
+      userID
+      languageCode
+      credits
+      currentLevel
+      unlockedLevels
+      wordsCompleted
+      wordsSkipped
+      currentStreak
+      bestStreak
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+    wordID
+    word {
+      id
+      levelID
+      word
+      hint
+      skipCost
+      createdAt
+      updatedAt
+      __typename
+    }
+    isDiscovered
+    discoveredAt
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+subscription OnCreateWordDatabase(
+  $filter: ModelSubscriptionWordDatabaseFilterInput
+) {
+  onCreateWordDatabase(filter: $filter) {
+    id
+    languageCode
+    levels {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+subscription OnUpdateWordDatabase(
+  $filter: ModelSubscriptionWordDatabaseFilterInput
+) {
+  onUpdateWordDatabase(filter: $filter) {
+    id
+    languageCode
+    levels {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+subscription OnDeleteWordDatabase(
+  $filter: ModelSubscriptionWordDatabaseFilterInput
+) {
+  onDeleteWordDatabase(filter: $filter) {
+    id
+    languageCode
+    levels {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+subscription OnCreateLevel($filter: ModelSubscriptionLevelFilterInput) {
+  onCreateLevel(filter: $filter) {
+    id
+    wordDatabaseID
+    wordDatabase {
+      id
+      languageCode
+      createdAt
+      updatedAt
+      __typename
+    }
+    levelNumber
+    words {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+subscription OnUpdateLevel($filter: ModelSubscriptionLevelFilterInput) {
+  onUpdateLevel(filter: $filter) {
+    id
+    wordDatabaseID
+    wordDatabase {
+      id
+      languageCode
+      createdAt
+      updatedAt
+      __typename
+    }
+    levelNumber
+    words {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+subscription OnDeleteLevel($filter: ModelSubscriptionLevelFilterInput) {
+  onDeleteLevel(filter: $filter) {
+    id
+    wordDatabaseID
+    wordDatabase {
+      id
+      languageCode
+      createdAt
+      updatedAt
+      __typename
+    }
+    levelNumber
+    words {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+subscription OnCreateWord($filter: ModelSubscriptionWordFilterInput) {
+  onCreateWord(filter: $filter) {
+    id
+    levelID
+    level {
+      id
+      wordDatabaseID
+      levelNumber
+      createdAt
+      updatedAt
+      __typename
+    }
+    word
+    hint
+    skipCost
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+subscription OnUpdateWord($filter: ModelSubscriptionWordFilterInput) {
+  onUpdateWord(filter: $filter) {
+    id
+    levelID
+    level {
+      id
+      wordDatabaseID
+      levelNumber
+      createdAt
+      updatedAt
+      __typename
+    }
+    word
+    hint
+    skipCost
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+subscription OnDeleteWord($filter: ModelSubscriptionWordFilterInput) {
+  onDeleteWord(filter: $filter) {
+    id
+    levelID
+    level {
+      id
+      wordDatabaseID
+      levelNumber
+      createdAt
+      updatedAt
+      __typename
+    }
+    word
+    hint
+    skipCost
+    createdAt
+    updatedAt
+    __typename
+  }
+}

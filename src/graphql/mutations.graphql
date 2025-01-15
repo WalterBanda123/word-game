@@ -1,0 +1,490 @@
+# this is an auto generated file. This will be overwritten
+
+mutation CreateUser(
+  $input: CreateUserInput!
+  $condition: ModelUserConditionInput
+) {
+  createUser(input: $input, condition: $condition) {
+    id
+    cognitoId
+    username
+    gameProgresses {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+mutation UpdateUser(
+  $input: UpdateUserInput!
+  $condition: ModelUserConditionInput
+) {
+  updateUser(input: $input, condition: $condition) {
+    id
+    cognitoId
+    username
+    gameProgresses {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+mutation DeleteUser(
+  $input: DeleteUserInput!
+  $condition: ModelUserConditionInput
+) {
+  deleteUser(input: $input, condition: $condition) {
+    id
+    cognitoId
+    username
+    gameProgresses {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+mutation CreateGameProgress(
+  $input: CreateGameProgressInput!
+  $condition: ModelGameProgressConditionInput
+) {
+  createGameProgress(input: $input, condition: $condition) {
+    id
+    userID
+    user {
+      id
+      cognitoId
+      username
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+    languageCode
+    credits
+    currentLevel
+    unlockedLevels
+    wordsCompleted
+    wordsSkipped
+    currentStreak
+    bestStreak
+    discoveredWords {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+mutation UpdateGameProgress(
+  $input: UpdateGameProgressInput!
+  $condition: ModelGameProgressConditionInput
+) {
+  updateGameProgress(input: $input, condition: $condition) {
+    id
+    userID
+    user {
+      id
+      cognitoId
+      username
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+    languageCode
+    credits
+    currentLevel
+    unlockedLevels
+    wordsCompleted
+    wordsSkipped
+    currentStreak
+    bestStreak
+    discoveredWords {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+mutation DeleteGameProgress(
+  $input: DeleteGameProgressInput!
+  $condition: ModelGameProgressConditionInput
+) {
+  deleteGameProgress(input: $input, condition: $condition) {
+    id
+    userID
+    user {
+      id
+      cognitoId
+      username
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+    languageCode
+    credits
+    currentLevel
+    unlockedLevels
+    wordsCompleted
+    wordsSkipped
+    currentStreak
+    bestStreak
+    discoveredWords {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+mutation CreateDiscoveredWord(
+  $input: CreateDiscoveredWordInput!
+  $condition: ModelDiscoveredWordConditionInput
+) {
+  createDiscoveredWord(input: $input, condition: $condition) {
+    id
+    gameProgressID
+    gameProgress {
+      id
+      userID
+      languageCode
+      credits
+      currentLevel
+      unlockedLevels
+      wordsCompleted
+      wordsSkipped
+      currentStreak
+      bestStreak
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+    wordID
+    word {
+      id
+      levelID
+      word
+      hint
+      skipCost
+      createdAt
+      updatedAt
+      __typename
+    }
+    isDiscovered
+    discoveredAt
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+mutation UpdateDiscoveredWord(
+  $input: UpdateDiscoveredWordInput!
+  $condition: ModelDiscoveredWordConditionInput
+) {
+  updateDiscoveredWord(input: $input, condition: $condition) {
+    id
+    gameProgressID
+    gameProgress {
+      id
+      userID
+      languageCode
+      credits
+      currentLevel
+      unlockedLevels
+      wordsCompleted
+      wordsSkipped
+      currentStreak
+      bestStreak
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+    wordID
+    word {
+      id
+      levelID
+      word
+      hint
+      skipCost
+      createdAt
+      updatedAt
+      __typename
+    }
+    isDiscovered
+    discoveredAt
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+mutation DeleteDiscoveredWord(
+  $input: DeleteDiscoveredWordInput!
+  $condition: ModelDiscoveredWordConditionInput
+) {
+  deleteDiscoveredWord(input: $input, condition: $condition) {
+    id
+    gameProgressID
+    gameProgress {
+      id
+      userID
+      languageCode
+      credits
+      currentLevel
+      unlockedLevels
+      wordsCompleted
+      wordsSkipped
+      currentStreak
+      bestStreak
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+    wordID
+    word {
+      id
+      levelID
+      word
+      hint
+      skipCost
+      createdAt
+      updatedAt
+      __typename
+    }
+    isDiscovered
+    discoveredAt
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+mutation CreateWordDatabase(
+  $input: CreateWordDatabaseInput!
+  $condition: ModelWordDatabaseConditionInput
+) {
+  createWordDatabase(input: $input, condition: $condition) {
+    id
+    languageCode
+    levels {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+mutation UpdateWordDatabase(
+  $input: UpdateWordDatabaseInput!
+  $condition: ModelWordDatabaseConditionInput
+) {
+  updateWordDatabase(input: $input, condition: $condition) {
+    id
+    languageCode
+    levels {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+mutation DeleteWordDatabase(
+  $input: DeleteWordDatabaseInput!
+  $condition: ModelWordDatabaseConditionInput
+) {
+  deleteWordDatabase(input: $input, condition: $condition) {
+    id
+    languageCode
+    levels {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+mutation CreateLevel(
+  $input: CreateLevelInput!
+  $condition: ModelLevelConditionInput
+) {
+  createLevel(input: $input, condition: $condition) {
+    id
+    wordDatabaseID
+    wordDatabase {
+      id
+      languageCode
+      createdAt
+      updatedAt
+      __typename
+    }
+    levelNumber
+    words {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+mutation UpdateLevel(
+  $input: UpdateLevelInput!
+  $condition: ModelLevelConditionInput
+) {
+  updateLevel(input: $input, condition: $condition) {
+    id
+    wordDatabaseID
+    wordDatabase {
+      id
+      languageCode
+      createdAt
+      updatedAt
+      __typename
+    }
+    levelNumber
+    words {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+mutation DeleteLevel(
+  $input: DeleteLevelInput!
+  $condition: ModelLevelConditionInput
+) {
+  deleteLevel(input: $input, condition: $condition) {
+    id
+    wordDatabaseID
+    wordDatabase {
+      id
+      languageCode
+      createdAt
+      updatedAt
+      __typename
+    }
+    levelNumber
+    words {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+mutation CreateWord(
+  $input: CreateWordInput!
+  $condition: ModelWordConditionInput
+) {
+  createWord(input: $input, condition: $condition) {
+    id
+    levelID
+    level {
+      id
+      wordDatabaseID
+      levelNumber
+      createdAt
+      updatedAt
+      __typename
+    }
+    word
+    hint
+    skipCost
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+mutation UpdateWord(
+  $input: UpdateWordInput!
+  $condition: ModelWordConditionInput
+) {
+  updateWord(input: $input, condition: $condition) {
+    id
+    levelID
+    level {
+      id
+      wordDatabaseID
+      levelNumber
+      createdAt
+      updatedAt
+      __typename
+    }
+    word
+    hint
+    skipCost
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+mutation DeleteWord(
+  $input: DeleteWordInput!
+  $condition: ModelWordConditionInput
+) {
+  deleteWord(input: $input, condition: $condition) {
+    id
+    levelID
+    level {
+      id
+      wordDatabaseID
+      levelNumber
+      createdAt
+      updatedAt
+      __typename
+    }
+    word
+    hint
+    skipCost
+    createdAt
+    updatedAt
+    __typename
+  }
+}

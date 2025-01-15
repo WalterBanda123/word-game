@@ -1,0 +1,12 @@
+{
+  "AppSyncApiName": "wordgame",
+  "DynamoDBBillingMode": "PAY_PER_REQUEST",
+  "DynamoDBEnableServerSideEncryption": false,
+  "AuthCognitoUserPoolId": {
+    "Fn::GetAtt": [
+      "authwordgame8d911480",
+      "Outputs.UserPoolId"
+    ]
+  },
+  "AuthModeLastUpdated": "2025-01-14T12:35:57.135Z"
+}

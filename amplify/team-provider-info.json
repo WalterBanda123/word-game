@@ -1,0 +1,26 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-wordgame-dev-0a48c-authRole",
+      "UnauthRoleArn": "arn:aws:iam::615299765483:role/amplify-wordgame-dev-0a48c-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::615299765483:role/amplify-wordgame-dev-0a48c-authRole",
+      "Region": "eu-north-1",
+      "DeploymentBucketName": "amplify-wordgame-dev-0a48c-deployment",
+      "UnauthRoleName": "amplify-wordgame-dev-0a48c-unauthRole",
+      "StackName": "amplify-wordgame-dev-0a48c",
+      "StackId": "arn:aws:cloudformation:eu-north-1:615299765483:stack/amplify-wordgame-dev-0a48c/30369450-d273-11ef-971b-06bbfa989087",
+      "AmplifyAppId": "d1p7ltf8lk4afk"
+    },
+    "categories": {
+      "auth": {
+        "wordgame8d911480": {}
+      },
+      "api": {
+        "wordgame": {}
+      },
+      "hosting": {
+        "S3AndCloudFront": {}
+      }
+    }
+  }
+}

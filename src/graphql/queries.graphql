@@ -1,0 +1,470 @@
+# this is an auto generated file. This will be overwritten
+
+query GetUser($id: ID!) {
+  getUser(id: $id) {
+    id
+    cognitoId
+    username
+    gameProgresses {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+query ListUsers(
+  $id: ID
+  $filter: ModelUserFilterInput
+  $limit: Int
+  $nextToken: String
+  $sortDirection: ModelSortDirection
+) {
+  listUsers(
+    id: $id
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+    sortDirection: $sortDirection
+  ) {
+    items {
+      id
+      cognitoId
+      username
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+
+query GetGameProgress($id: ID!) {
+  getGameProgress(id: $id) {
+    id
+    userID
+    user {
+      id
+      cognitoId
+      username
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+    languageCode
+    credits
+    currentLevel
+    unlockedLevels
+    wordsCompleted
+    wordsSkipped
+    currentStreak
+    bestStreak
+    discoveredWords {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+query ListGameProgresses(
+  $id: ID
+  $filter: ModelGameProgressFilterInput
+  $limit: Int
+  $nextToken: String
+  $sortDirection: ModelSortDirection
+) {
+  listGameProgresses(
+    id: $id
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+    sortDirection: $sortDirection
+  ) {
+    items {
+      id
+      userID
+      languageCode
+      credits
+      currentLevel
+      unlockedLevels
+      wordsCompleted
+      wordsSkipped
+      currentStreak
+      bestStreak
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+
+query GetDiscoveredWord($id: ID!) {
+  getDiscoveredWord(id: $id) {
+    id
+    gameProgressID
+    gameProgress {
+      id
+      userID
+      languageCode
+      credits
+      currentLevel
+      unlockedLevels
+      wordsCompleted
+      wordsSkipped
+      currentStreak
+      bestStreak
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+    wordID
+    word {
+      id
+      levelID
+      word
+      hint
+      skipCost
+      createdAt
+      updatedAt
+      __typename
+    }
+    isDiscovered
+    discoveredAt
+    createdAt
+    updatedAt
+    owner
+    __typename
+  }
+}
+
+query ListDiscoveredWords(
+  $id: ID
+  $filter: ModelDiscoveredWordFilterInput
+  $limit: Int
+  $nextToken: String
+  $sortDirection: ModelSortDirection
+) {
+  listDiscoveredWords(
+    id: $id
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+    sortDirection: $sortDirection
+  ) {
+    items {
+      id
+      gameProgressID
+      wordID
+      isDiscovered
+      discoveredAt
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+
+query UsersByCognitoId(
+  $cognitoId: String!
+  $sortDirection: ModelSortDirection
+  $filter: ModelUserFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  usersByCognitoId(
+    cognitoId: $cognitoId
+    sortDirection: $sortDirection
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      cognitoId
+      username
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+
+query GameProgressesByUserID(
+  $userID: ID!
+  $sortDirection: ModelSortDirection
+  $filter: ModelGameProgressFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  gameProgressesByUserID(
+    userID: $userID
+    sortDirection: $sortDirection
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      userID
+      languageCode
+      credits
+      currentLevel
+      unlockedLevels
+      wordsCompleted
+      wordsSkipped
+      currentStreak
+      bestStreak
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+
+query DiscoveredWordsByGameProgressID(
+  $gameProgressID: ID!
+  $sortDirection: ModelSortDirection
+  $filter: ModelDiscoveredWordFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  discoveredWordsByGameProgressID(
+    gameProgressID: $gameProgressID
+    sortDirection: $sortDirection
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      gameProgressID
+      wordID
+      isDiscovered
+      discoveredAt
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+
+query GetWordDatabase($id: ID!) {
+  getWordDatabase(id: $id) {
+    id
+    languageCode
+    levels {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+query ListWordDatabases(
+  $id: ID
+  $filter: ModelWordDatabaseFilterInput
+  $limit: Int
+  $nextToken: String
+  $sortDirection: ModelSortDirection
+) {
+  listWordDatabases(
+    id: $id
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+    sortDirection: $sortDirection
+  ) {
+    items {
+      id
+      languageCode
+      createdAt
+      updatedAt
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+
+query GetLevel($id: ID!) {
+  getLevel(id: $id) {
+    id
+    wordDatabaseID
+    wordDatabase {
+      id
+      languageCode
+      createdAt
+      updatedAt
+      __typename
+    }
+    levelNumber
+    words {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+query ListLevels(
+  $id: ID
+  $filter: ModelLevelFilterInput
+  $limit: Int
+  $nextToken: String
+  $sortDirection: ModelSortDirection
+) {
+  listLevels(
+    id: $id
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+    sortDirection: $sortDirection
+  ) {
+    items {
+      id
+      wordDatabaseID
+      levelNumber
+      createdAt
+      updatedAt
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+
+query LevelsByWordDatabaseID(
+  $wordDatabaseID: ID!
+  $sortDirection: ModelSortDirection
+  $filter: ModelLevelFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  levelsByWordDatabaseID(
+    wordDatabaseID: $wordDatabaseID
+    sortDirection: $sortDirection
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      wordDatabaseID
+      levelNumber
+      createdAt
+      updatedAt
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+
+query GetWord($id: ID!) {
+  getWord(id: $id) {
+    id
+    levelID
+    level {
+      id
+      wordDatabaseID
+      levelNumber
+      createdAt
+      updatedAt
+      __typename
+    }
+    word
+    hint
+    skipCost
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+
+query ListWords(
+  $id: ID
+  $filter: ModelWordFilterInput
+  $limit: Int
+  $nextToken: String
+  $sortDirection: ModelSortDirection
+) {
+  listWords(
+    id: $id
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+    sortDirection: $sortDirection
+  ) {
+    items {
+      id
+      levelID
+      word
+      hint
+      skipCost
+      createdAt
+      updatedAt
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
+
+query WordsByLevelID(
+  $levelID: ID!
+  $sortDirection: ModelSortDirection
+  $filter: ModelWordFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  wordsByLevelID(
+    levelID: $levelID
+    sortDirection: $sortDirection
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      levelID
+      word
+      hint
+      skipCost
+      createdAt
+      updatedAt
+      __typename
+    }
+    nextToken
+    __typename
+  }
+}
